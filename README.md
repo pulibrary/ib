@@ -12,7 +12,7 @@ Werkzeug and Jinja2 are required. Both are available in apt:
 Configuration
 -------------
 Set the two properties at the top of `ib.conf`. The application assumes that 
-our Djatoka is set up with out production resolver.
+Djatoka is set up with our production resolver.
 
 Debugging
 ---------
