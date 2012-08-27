@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+	<h1>{{ name }}</h1>
+	{%- if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{%- endif %}
+	<nav>
+		<ul>
+			<li><a href=/>Back To Root</a></li>
+			<li><a href="{{ parent }}">Parent Directory</a></li>
+		</ul>
+	</nav>
+	<h2>Subdirectories</h2>
+	{%- for d in dirs %}
+	{%- if loop.first %}
+	<ul>
+	{%- endif %}
+		<li><a href="{{ d.rel_path }}">{{ d.name }}</a></li>
+	{%- if loop.last %}
+	</ul>
+	{%- endif %}
+	{%- endfor %}
+
+	<h2>Images</h2>
+	{%- for image in jp2s %}
+	{%- if loop.first %}
+	<ul class="images">
+	{%- endif %}
+		<li>
+			<a href="{{ urn_to_djatoka_query(5, image.urn) }}">
+				<img src="{{ urn_to_djatoka_query(1, image.urn) }}">
+			</a>
+			<p>{{ image.name }}</p>
+		</li>
+	{%- if loop.last %}
+	</ul>
+	{%- endif %}
+	{%- endfor %}
+
+{% endblock %}
