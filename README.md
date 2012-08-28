@@ -16,7 +16,9 @@ Djatoka is set up with our production resolver.
 
 Web Server Configuration
 -------------
-If you are using Apache as your webserver, add the following code to your VirtualHost file:
+If you are using Apache as your webserver, add the following code to your 
+VirtualHost file:
+
 ``` 
     WSGIDaemonProcess ib user=shaune group=shaune processes=2 threads=5
     WSGIScriptAlias /ib /home/shaune/workspace/ib/ib.wsgi
@@ -32,10 +34,14 @@ If you are using Apache as your webserver, add the following code to your Virtua
 
 ib should then be accessible at http://yourhostname/ib
 
+In production you should create a user for the application to run under, e.g.
+
+```useradd -d /path/to/ib_app -s /sbin/false ib```
+
 Debugging
 ---------
 Running the module (`python ./ib.py`) will start a dev. server on port 5000.
 
 Logging
 -------
-Levels, etc. are set in `ib.conf`. Note that logs must be writable by the webserver.  If they are not, you will get an Ineternal Server Error (500).
+Levels, etc. are set in `ib.conf`. Note that logs must be writable by the webserver. If they are not, you will get an Ineternal Server Error (500).
