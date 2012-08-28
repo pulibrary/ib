@@ -18,10 +18,10 @@ Web Server Configuration
 -------------
 If you are using Apache as your webserver, add the following code to your VirtualHost file:
 ``` 
-    WSGIDaemonProcess ib user=shaune group=shaune processes=2 threads=5
-    WSGIScriptAlias /ib /home/shaune/workspace/ib/ib.wsgi
+    WSGIDaemonProcess ib user=[webserver user] group=[webserver user] processes=2 threads=5
+    WSGIScriptAlias /ib /path/to/ib/ib.wsgi
 
-    <Directory /home/shaune/workspace/ib>
+    <Directory /path/to/ib>
         WSGIProcessGroup ib
         WSGIApplicationGroup %{GLOBAL}
         Order allow,deny
