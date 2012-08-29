@@ -3,12 +3,14 @@
 {% block body %}
 	<h1>{{ name }}</h1>
 	{%- if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{%- endif %}
+	{%- if show_home or parent != "" %}
 	<nav>
 		<ul>
-			<li><a href=/>Back To Root</a></li>
-			<li><a href="{{ parent }}">Parent Directory</a></li>
+			{%- if show_home %}<li><a href="">Home</a></li>{%- endif %}
+			{%- if parent != "" %}<li><a href="{{ parent }}">Parent Directory</a></li>{%- endif %}
 		</ul>
 	</nav>
+	{%- endif %}
 	<h2>Subdirectories</h2>
 	{%- for d in dirs %}
 	{%- if loop.first %}

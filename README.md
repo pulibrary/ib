@@ -11,7 +11,7 @@ Werkzeug and Jinja2 are required. Both are available in apt:
 
 Configuration
 -------------
-Set the two properties at the top of `ib.conf`. The application assumes that 
+Set the three properties at the top of `ib.conf`. The application assumes that 
 Djatoka is set up with our production resolver.
 
 Web Server Configuration
