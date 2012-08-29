@@ -1,8 +1,10 @@
 <!doctype html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
+		<base href="{{ base }}"/>
 		<title>{% block title %} {% endblock %}</title>
-		<link rel="stylesheet" href="/static/style.css" type="text/css">
+		<link rel="stylesheet" href="static/style.css" type="text/css">
+		
 	</head>
 	<body>
 	{%- block body %}
