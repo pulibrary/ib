@@ -1,29 +1,26 @@
 #!/usr/bin/env python
+#-*- coding: utf-8 -*-
 # ib.py
-from jinja2 import Environment, FileSystemLoader
 
+from jinja2 import Environment, FileSystemLoader
 from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.routing import Map, Rule
 from werkzeug.utils import redirect
 from werkzeug.wrappers import Request, Response
 from werkzeug.wsgi import SharedDataMiddleware
-
 import ConfigParser
-
 import logging
 import logging.config
-
 import os
-
+import sqlite3 as sqlite
 import urlparse
 
-
-
 class Ib(object):
-	def __init__(self, jp2_root, djatoka_url, app_root):
+	def __init__(self, jp2_root, djatoka_url, url_root, app_title):
 		self.jp2_root = jp2_root if jp2_root.endswith('/') else jp2_root + '/' # for consistent path hacking
 		self.djatoka_url = djatoka_url
-		self.app_root = app_root if app_root.endswith('/') else app_root + '/'
+		self.url_root = url_root if url_root.endswith('/') else url_root + '/'
+		self.app_title = app_title
 
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
@@ -33,7 +30,7 @@ class Ib(object):
 		self.url_map = Map([
 			Rule('/', endpoint='page_from_dir'),
 			Rule('/<path:fs_path>', endpoint='page_from_dir'),
-			Rule('/_headers', endpoint='list_headers'), # for debguging
+#			Rule('/_headers', endpoint='list_headers'), # for debguging
 		])
 
 
@@ -92,29 +89,44 @@ class Ib(object):
 		sub_dirs = self.list_dirs(img_dir)
 		jp2s = self.list_jp2s(img_dir)
 		this_page = img_dir[len(self.jp2_root):]
-		name = img_dir.split('/')[-1] if fs_path else 'Digital Initiatives Image Browser'
-		title = 'Images of ' + this_page if fs_path else 'Digital Initiatives Image Browser'
 
 		logr.debug('img_dir: ' + img_dir)
 		logr.debug('parent: ' + parent)
+		logr.debug('this_page: ' + this_page)
 
-		# return Response(fs_path)
-		return self.render_template('standard_page.html',
-			base=self.app_root,
-			show_home=bool(fs_path),
-			name=name,
-			title=title,
-			parent=parent,
-			dirs=sub_dirs,
-			jp2s=jp2s
-		)
+		if request.method == 'POST':
+			image_dir = this_page # the page in the image browser
+			component_uri = request.form['component_uri']
+			note = request.form['note']
+
+			# we capture the new data, and then what? stay on the page? redirect?
+
+		else: # GET
+			# TODO read from the db and pass (c_uri, note) two-tuples for
+			# pre-propopulating the existing form
+
+
+			name = img_dir.split('/')[-1] if fs_path else self.app_title
+			title = 'Images of ' + this_page if fs_path else self.app_title
+
+			# return Response(fs_path)
+			return self.render_template('standard_page.html',
+				base=self.url_root,
+				show_home=bool(fs_path),
+				name=name,
+				title=title,
+				parent=parent,
+				dirs=sub_dirs,
+				jp2s=jp2s
+			)
 
 	def on_list_headers(self, request):
 		from werkzeug.datastructures import Headers
 		
-		body = ''
+		body = '==== Request Headers ====\n'
 		for k in request.headers.keys():
 			body += '%s: %s\n' % (k, request.headers.get(k))
+		body += '\n==== Headers from WSGI ====\n'
 		for k in request.environ:
 			body += '%s: %s\n' % (k, request.environ.get(k))
 		resp = Response(body)
@@ -181,10 +193,12 @@ def create_app():
 	djatoka_url = conf.get('paths', 'djatoka_url')
 	logr.info('djatoka_url: ' + djatoka_url)
 
-	app_root = conf.get('paths', 'app_url_root')
-	logr.info('app_root: ' + app_root)
+	url_root = conf.get('paths', 'url_root')
+	logr.info('url_root: ' + url_root)
 
-	app = Ib(jp2_root=jp2_root, djatoka_url=djatoka_url, app_root=app_root)
+	app_title = conf.get('app', 'name')
+
+	app = Ib(jp2_root=jp2_root, djatoka_url=djatoka_url, url_root=url_root, app_title=app_title)
 	app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
 		'/static':  os.path.join(os.path.dirname(__file__), 'static')
 	})
