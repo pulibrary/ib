@@ -11,9 +11,10 @@
 		</ul>
 	</nav>
 	{%- endif %}
-	<h2>Subdirectories</h2>
+
 	{%- for d in dirs %}
 	{%- if loop.first %}
+	<h2>Subdirectories</h2>
 	<ul>
 	{%- endif %}
 		<li><a href="{{ d.rel_path }}">{{ d.name }}</a></li>
@@ -22,9 +23,20 @@
 	{%- endif %}
 	{%- endfor %}
 
-	<h2>Images</h2>
 	{%- for image in jp2s %}
 	{%- if loop.first %}
+	<h2>Images</h2>
+	<form action="" method="post">
+		{% if error %}
+		<p class=error><strong>Error:</strong> {{ error }}
+		{% endif %}
+		<p><span style="font-weight: bold;">Associate images with this component</span><br/>
+		<input type='text' name="component_uri" class="uriinput" value="{{ component_uri }}"><br/>
+		<span style="font-weight: bold;">Note</span><br/>
+		<textarea type='text' name='note' class="note">{{ note }}</textarea><br/>
+		<input type=submit value="Submit">
+	</form>
+
 	<ul class="images">
 	{%- endif %}
 		<li>
