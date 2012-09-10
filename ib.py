@@ -71,7 +71,8 @@ class Ib(object):
 			if not d.startswith('.') and os.path.isdir(abs_path):
 				rel =  abs_path[len(self.jp2_root):]	
 				name = abs_path.split(os.sep)[-1]
-				dirs.append(ImageDir(abs_path, rel, name))
+				component = self.db_get_row(rel)
+				dirs.append(ImageDir(abs_path, rel, name, component))
 		dirs.sort()
 		return dirs
 
@@ -125,8 +126,8 @@ class Ib(object):
 		if request.method == 'POST':
 			component_uri = request.form['component_uri']
 			note = request.form['note']
-			if not self.is_valid_uri(component_uri):
-				error = 'Please enter a valid component URI.'
+			if not self.is_valid_uri(component_uri) and component_uri:
+				error = 'Please enter a valid component URI. [' + component_uri + ']'
 			else:
 				self.db_put_row(image_dir, component_uri, note)
 			# we capture the new data, and then what? stay on the page? redirect?
@@ -150,6 +151,7 @@ class Ib(object):
 			jp2s=jp2s,
 			component_uri=component_uri,
 			note=note,
+			this_page=this_page,
 			error=error
 		)
 
@@ -178,7 +180,7 @@ class Ib(object):
 			finally:
 				if con:	con.close()
 
-	def db_put_row(self, img_dir, component_uri, note=''):
+	def db_put_row(self, img_dir, component_uri='', note=''):
 		con = sqlite.connect(self.db_path)
 		# TODO: do we need error handling?
 		# TODO: log success/fail
@@ -233,10 +235,11 @@ class ImageDir(object):
 	"""Stuff we need to know about an image directory (gets passed to the 
 		template engine).
 	"""
-	def __init__(self, abs_path, rel_path, name):
+	def __init__(self, abs_path, rel_path, name, component=""):
 		self.abs_path = abs_path
 		self.rel_path = rel_path
 		self.name = name
+		self.component = component
 
 	def __lt__(self, other):
 		"""Show python how to sort these"""
