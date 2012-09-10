@@ -2,7 +2,8 @@
  /* LOCAL FUNCTIONS FOR FINDINGAIDS PAGE
   * ======================================================= */
 
-$(function () {
+
+$(document).ready(function(){
 	
 	if (getCookie("showEAD") == 'true'){
 		$(".eadinfo").show();
@@ -12,15 +13,16 @@ $(function () {
 		$("#eadtoggle").html("Show EAD Tools");
 	}
 	
-	$("#eadtoggle").click(function () {
+
+	$("#eadtoggle").on("click", function(){
 		//$(".eadinfo").toggle(flipCookie("showEAD"));
 		$(".eadinfo").toggle(
 			function() {
 				
 				if(flipCookie("showEAD")){
-					$("#eadtoggle").html("Show EAD Tools");
-				}else{
 					$("#eadtoggle").html("Hide EAD Tools");
+				}else{
+					$("#eadtoggle").html("Show EAD Tools");
 				}
 				
 			});
@@ -51,7 +53,7 @@ $(function () {
 	{
 		var exdate=new Date();
 		exdate.setDate(exdate.getDate() + exdays);
-		var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+		var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString())+"; path=/";
 		document.cookie=c_showEAD + "=" + c_value;
 	}
 
