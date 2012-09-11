@@ -3,11 +3,18 @@
 	<head>
 		<base href="{{ base }}"/>
 		<title>{% block title %} {% endblock %}</title>
+		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css" type="text/css">
 		<link rel="stylesheet" href="static/style.css" type="text/css">
 		
 	</head>
 	<body>
-	{%- block body %}
-	{%- endblock %}
+
+      	{%- block body %}
+		{%- endblock %}
+			
+	
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/local.js"></script>
 	</body>
 </html>
