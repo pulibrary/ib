@@ -13,6 +13,7 @@ $(document).ready(function(){
 		$(".eadinfo").show();
 	}
 	
+	$(".alert").alert()
 
 	$("#eadtoggle").on("click", function(){
 		//$(".eadinfo").toggle(flipCookie("showEAD"));
@@ -52,10 +53,26 @@ $(document).ready(function(){
 	    	    },
 	    	  data: { component_uri: c, note: n },
 	    	  error: function (xhr, thrownError) {
-	    	        console.log(xhr.responseText);
+	    		  $( "#msg" ).empty().append( xhr.responseText );
+	    		  $(".alert").addClass("alert-error");
+	    		  $(".alert").fadeIn('fast');
 	    	      },
 	    	  success: function(data) {
-		        $( "#result" ).empty().append( data );
+	    		if(data == 'Success!'){
+	    			$(".alert").addClass("alert-success");
+	    		}else{
+	    			$(".alert").addClass("alert-error");
+	    		}
+	    		
+		        $( "#msg" ).empty().append( data );
+		        $(".alert").fadeIn('fast');
+		        
+		        // only keep the error around if it's something they need to take action on.
+		        if(data == 'Success!'){
+			        setTimeout(function() {
+			            $('.alert').fadeOut('slow');
+			        }, 1000);
+		        }
 	    	  }
 	    	});
 	    
