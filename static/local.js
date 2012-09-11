@@ -5,12 +5,12 @@
 
 $(document).ready(function(){
 	
-	if (getCookie("showEAD") == 'true'){
-		$(".eadinfo").show();
-		$("#eadtoggle").html("Hide EAD Tools");
-	}else{
-		$(".eadinfo").hide();
+	if (getCookie("showEAD") != 'true'){
 		$("#eadtoggle").html("Show EAD Tools");
+		$(".eadinfo").hide();
+	}else{		
+		$("#eadtoggle").html("Hide EAD Tools");
+		$(".eadinfo").show();
 	}
 	
 
@@ -29,6 +29,48 @@ $(document).ready(function(){
 		
 		
 	});
+	
+	  /* attach a submit handler to the form */
+	  $("#eadForm").submit(function(event) {
+
+	    /* stop form from submitting normally */
+	    event.preventDefault(); 
+	        
+	    /* get some values from elements on the page: */
+	    var $form = $( this ),
+	        c = $form.find( 'input[name="component_uri"]' ).val(),
+	        n = $form.find( 'input[name="note"]' ).val(),
+	        url = $form.attr( 'action' );
+	        //alert(url);
+
+	    $.ajax({
+	    	  url: window.location.href,
+	    	  type: "POST",
+	    	  headers: { 
+	    	        Accept : "text/html",
+	    	        "Content-Type": "text/html"
+	    	    },
+	    	  data: { component_uri: c, note: n },
+	    	  success: function(data) {
+	    		var content = $( data ).find( '.error' );
+	    		//alert(content);
+	    		console.log(content);
+		        $( "#result" ).empty().append( content );
+	    	    //$('#result').html(data);
+	    	    //alert(data);
+	    	  }
+	    	});
+	    
+	    /* Send the data using post and put the results in a div */
+	    /*
+	    $.post( window.location.href, { component_uri: c, note: n },
+	      function( data ) {
+	          var content = $( data ).find( 'body' );
+	          $( "#result" ).empty().append( content );
+	      }
+	    );
+	    */
+	  });
 	
 	
 /* Cookie Stuff

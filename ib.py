@@ -124,6 +124,8 @@ class Ib(object):
 		image_dir = this_page # the page in the image browser
 
 		if request.method == 'POST':
+			if not image_dir:
+				image_dir = request.form['image_dir']
 			component_uri = request.form['component_uri']
 			note = request.form['note']
 			if not self.is_valid_uri(component_uri) and component_uri:

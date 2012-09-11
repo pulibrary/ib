@@ -44,7 +44,7 @@
 			{%- for d in dirs %}
 			{%- if loop.first %}
 			<h2>Subdirectories</h2>
-			<ul>
+			<ul class="dirlist">
 			{%- endif %}
 				<li><a href="{{ d.rel_path }}">{{ d.name }}</a>
 					<span class="eadinfo" style="display:none;">
@@ -63,7 +63,8 @@
 	{%- if loop.first %}
 
 	<div id="eadform" class="eadinfo" style="display:none"> 
-		<form action="" method="post">
+		<div id="result"></div>
+		<form id="eadForm" action="" method="post">
 			{% if error %}
 			<p class=error><strong>Error:</strong> {{ error }}
 			{% endif %}

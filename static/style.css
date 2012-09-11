@@ -34,3 +34,12 @@ nav li+li {
 	width: 35em; 	
 	height: 5em;
 }
+
+.dirlist {
+    margin-top: -20px; 
+    margin-bottom:10px;
+}
+
+form {
+    margin-top: 20px;
+}
