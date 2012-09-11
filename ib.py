@@ -3,7 +3,7 @@
 # ib.py
 
 from jinja2 import Environment, FileSystemLoader
-from werkzeug.exceptions import HTTPException, NotFound
+from werkzeug.exceptions import BadRequest, InternalServerError, HTTPException
 from werkzeug.routing import Map, Rule
 from werkzeug.utils import redirect
 from werkzeug.wrappers import Request, Response
@@ -92,6 +92,7 @@ class Ib(object):
 		jp2s.sort()
 		return jp2s
 
+
 	def on_db_dump(self, request):
 		con = sqlite.connect(self.db_path)
 		with con:
@@ -104,7 +105,6 @@ class Ib(object):
 				sane_note = ' '.join(row[2].splitlines())
 				resp += '%s\t%s\t%s\n' % (row[0], component_path, sane_note)
 		return Response(resp, mimetype='text/plain')
-
 
 
 	def on_page_from_dir(self, request, fs_path=None, error=''):
@@ -124,14 +124,31 @@ class Ib(object):
 		image_dir = this_page # the page in the image browser
 
 		if request.method == 'POST':
-			if not image_dir:
-				image_dir = request.form['image_dir']
-			component_uri = request.form['component_uri']
-			note = request.form['note']
-			if not self.is_valid_uri(component_uri) and component_uri:
-				error = 'Please enter a valid component URI. [' + component_uri + ']'
-			else:
-				self.db_put_row(image_dir, component_uri, note)
+			# See the first line of this method. There's always an image_dir
+			# if not image_dir: 
+			# 	image_dir = request.form['image_dir']
+			try:
+				component_uri = request.form['component_uri']
+				note = request.form['note']
+				if not self.is_valid_uri(component_uri) and component_uri:
+					error='Please enter a valid component URI. [Sent: ' + component_uri + ']'
+					raise IbException(http_status=400, msg=error)
+				else:
+					self.db_put_row(image_dir, component_uri, note)
+					msg = 'Success!'
+					status=200
+					mime = 'text/plain'
+			except IbException, e:
+				status = e.http_status
+				msg = e.message
+				mime = e.mimetype
+			except Exception as e:
+				status = 500
+				msg = e.message
+				mime = 'text/plain'
+			finally:
+				return Response(msg, mimetype=mime, status=status)
+
 			# we capture the new data, and then what? stay on the page? redirect?
 
 		else: # GET
@@ -143,19 +160,19 @@ class Ib(object):
 
 
 		# return Response(fs_path)
-		return self.render_template('standard_page.html',
-			base=self.url_root,
-			show_home=bool(fs_path),
-			name=name,
-			title=title,
-			parent=parent,
-			dirs=sub_dirs,
-			jp2s=jp2s,
-			component_uri=component_uri,
-			note=note,
-			this_page=this_page,
-			error=error
-		)
+			return self.render_template('standard_page.html',
+				base=self.url_root,
+				show_home=bool(fs_path),
+				name=name,
+				title=title,
+				parent=parent,
+				dirs=sub_dirs,
+				jp2s=jp2s,
+				component_uri=component_uri,
+				note=note,
+				this_page=this_page,
+				error=error # this should be refactored out.
+			)
 
 	def is_valid_uri(self, uri):
 		return re.match('http://findingaids\.princeton\.edu/collections/[^/]+/c0\d+', uri)
@@ -289,6 +306,13 @@ def create_app():
 	})
 	return app
 
+class IbException(Exception):
+	def __init__(self, http_status=400, msg='', mimetype='text/plain'):
+		"""
+		"""
+		super(IbException, self).__init__(msg)
+		self.http_status = http_status
+		self.mimetype=mimetype
 
 if __name__ == '__main__':
 	from werkzeug.serving import run_simple
