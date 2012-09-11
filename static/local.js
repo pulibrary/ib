@@ -47,17 +47,20 @@ $(document).ready(function(){
 	    	  url: window.location.href,
 	    	  type: "POST",
 	    	  headers: { 
-	    	        Accept : "text/html",
-	    	        "Content-Type": "text/html"
+	    	        // Accept : "text/plain",
+	    	        "Content-Type": "application/x-www-form-urlencoded"
 	    	    },
 	    	  data: { component_uri: c, note: n },
+	    	  error: function (xhr, thrownError) {
+	    	        console.log(xhr.responseText);
+	    	      },
 	    	  success: function(data) {
-	    		var content = $( data ).find( '.error' );
+	    		var content = $( data ).find( 'body' );
 	    		//alert(content);
 	    		console.log(content);
 		        $( "#result" ).empty().append( content );
 	    	    //$('#result').html(data);
-	    	    //alert(data);
+	    	    alert(data);
 	    	  }
 	    	});
 	    

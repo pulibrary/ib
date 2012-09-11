@@ -59,7 +59,7 @@ class Ib(object):
 			endpoint, values = adapter.match()
 			return getattr(self, 'on_' + endpoint)(request, **values)
 		except HTTPException, e:
-			return e
+			return Response(e.message) #e
 
 	def list_dirs(self, img_dir):
 		"""Leaves out hidden dirs
@@ -144,7 +144,7 @@ class Ib(object):
 				mime = e.mimetype
 			except Exception as e:
 				status = 500
-				msg = e.message
+				msg =  e._class__.__name__ #e.message
 				mime = 'text/plain'
 			finally:
 				return Response(msg, mimetype=mime, status=status)
