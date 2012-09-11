@@ -38,6 +38,7 @@ class Ib(object):
 			Rule('/', endpoint='page_from_dir'),
 			Rule('/<path:fs_path>', endpoint='page_from_dir'),
 			Rule('/c_map', endpoint='db_dump'),
+			Rule('/favicon.ico', endpoint='get_favicon')
 #			Rule('/_headers', endpoint='list_headers'), # for debguging
 		])
 	
@@ -74,6 +75,8 @@ class Ib(object):
 		dirs.sort()
 		return dirs
 
+
+
 	def list_jp2s(self,img_dir):
 		"""Leaves out hidden files and filters in jp2s by file extension. List
 		contains URNs that can be used w/ Djatoka.
@@ -104,6 +107,9 @@ class Ib(object):
 				resp += '%s\t%s\t%s\n' % (row[0], component_path, sane_note)
 		return Response(resp, mimetype='text/plain')
 
+	def on_get_favicon(self, request):
+		f = os.path.join(os.path.dirname(__file__), 'favicon.ico')
+		return Response(f, content_type='image/x-icon')
 
 	def on_page_from_dir(self, request, fs_path=None, error=''):
 		img_dir = os.path.join(self.jp2_root, fs_path) if fs_path else self.jp2_root
@@ -142,7 +148,7 @@ class Ib(object):
 				mime = e.mimetype
 			except Exception as e:
 				status = 500
-				msg =  e._class__.__name_ + ': ' + e.message
+				msg =  e._class__.__name__ + ': ' + e.message
 				mime = 'text/plain'
 			finally:
 				return Response(msg, mimetype=mime, status=status)
