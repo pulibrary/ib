@@ -39,15 +39,15 @@ $(document).ready(function(){
 	    /* get some values from elements on the page: */
 	    var $form = $( this ),
 	        c = $form.find( 'input[name="component_uri"]' ).val(),
-	        n = $form.find( 'input[name="note"]' ).val(),
+	        n = $form.find( 'textarea[name="note"]' ).val(),
 	        url = $form.attr( 'action' );
-	        //alert(url);
 
+	    
 	    $.ajax({
 	    	  url: window.location.href,
 	    	  type: "POST",
 	    	  headers: { 
-	    	        // Accept : "text/plain",
+	    	        Accept : "text/plain",
 	    	        "Content-Type": "application/x-www-form-urlencoded"
 	    	    },
 	    	  data: { component_uri: c, note: n },
@@ -55,12 +55,7 @@ $(document).ready(function(){
 	    	        console.log(xhr.responseText);
 	    	      },
 	    	  success: function(data) {
-	    		var content = $( data ).find( 'body' );
-	    		//alert(content);
-	    		console.log(content);
-		        $( "#result" ).empty().append( content );
-	    	    //$('#result').html(data);
-	    	    alert(data);
+		        $( "#result" ).empty().append( data );
 	    	  }
 	    	});
 	    

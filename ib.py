@@ -55,11 +55,9 @@ class Ib(object):
 
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
-		try:
-			endpoint, values = adapter.match()
-			return getattr(self, 'on_' + endpoint)(request, **values)
-		except HTTPException, e:
-			return Response(e.message) #e
+		endpoint, values = adapter.match()
+		return getattr(self, 'on_' + endpoint)(request, **values)
+		
 
 	def list_dirs(self, img_dir):
 		"""Leaves out hidden dirs
@@ -144,7 +142,7 @@ class Ib(object):
 				mime = e.mimetype
 			except Exception as e:
 				status = 500
-				msg =  e._class__.__name__ #e.message
+				msg =  e._class__.__name_ + ': ' + e.message
 				mime = 'text/plain'
 			finally:
 				return Response(msg, mimetype=mime, status=status)
