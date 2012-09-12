@@ -66,7 +66,7 @@
 		
 		<form id="eadForm" action="" method="post">
 			<div class="alert" data-dismiss="alert" style="max-width: 450px; margin-top:20px; display:none">
-			  <button type="button" class="close" data-dismiss="alert">×</button>
+			  <button type="button" class="close" data-dismiss="alert">&times;</button>
 			  <span id="msg"></span>
 			</div>
 			{% if error %}
@@ -83,7 +83,8 @@
 	<ul class="thumbnails">
 	{%- endif %}
 		<li>
-			<a href="{{ urn_to_djatoka_query(5, image.urn) }}">
+			<a href="#imgZoom" data-toggle="modal">
+			<!-- <a href="{{ urn_to_djatoka_query(5, image.urn) }}"> -->
 				<img class="thumbnail" src="{{ urn_to_djatoka_query(1, image.urn) }}">
 			</a>
 			<p>{{ image.name }}</p>
@@ -92,6 +93,23 @@
 	</ul>
 	{%- endif %}
 	{%- endfor %}
+	</div>
+
+	<!-- Button to trigger modal -->
+	<!-- <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a> -->
+	 
+	<!-- Modal -->
+	<div class="modal hide fade" id="imgZoom" tabindex="-1" role="dialog" aria-labelledby="imgZoomLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h3 id="imgZoomLabel">Image Detail</h3>
+	  </div>
+	  <div class="modal-body">
+	    <img id="zoomImg" src="" />
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	  </div>
 	</div>
 
 
