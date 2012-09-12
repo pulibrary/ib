@@ -31,6 +31,41 @@ $(document).ready(function(){
 		
 	});
 	
+	function clientCoords() {
+		var dimensions = {width: 0, height: 0};
+		if (document.body && document.body.offsetWidth) {
+		 dimensions.width = document.body.offsetWidth;
+		 dimensions.height = document.body.offsetHeight;
+		}
+		if (document.compatMode=='CSS1Compat' &&
+		    document.documentElement &&
+		    document.documentElement.offsetWidth ) {
+		 dimensions.width = document.documentElement.offsetWidth;
+		 dimensions.height = document.documentElement.offsetHeight;
+		}
+		if (window.innerWidth && window.innerHeight) {
+		 dimensions.width = window.innerWidth;
+		 dimensions.height = window.innerHeight;
+		}
+		return dimensions;
+	}
+	
+	$(".thumbnail").on("click", function(){
+		
+		$('.modal').css({
+	        width: clientCoords().width - 100,
+	        height: "auto",
+	        top: 300,
+	        'margin-left': function () {
+	            return -($(this).width() / 2);
+	        }
+	    });
+		
+		$('.modal-body').css('max-height', clientCoords().height - 300)
+		
+		$("#zoomImg").attr("src", this.src.substring(0, this.src.length - 1) + "5");
+	});
+	
 	  /* attach a submit handler to the form */
 	  $("#eadForm").submit(function(event) {
 
@@ -75,16 +110,7 @@ $(document).ready(function(){
 		        }
 	    	  }
 	    	});
-	    
-	    /* Send the data using post and put the results in a div */
-	    /*
-	    $.post( window.location.href, { component_uri: c, note: n },
-	      function( data ) {
-	          var content = $( data ).find( 'body' );
-	          $( "#result" ).empty().append( content );
-	      }
-	    );
-	    */
+
 	  });
 	
 	
