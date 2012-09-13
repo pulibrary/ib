@@ -44,3 +44,11 @@ form {
     margin-top: 20px;
 }
 
+#bg {
+    background-color: #2E2E2E;
+    padding: 10px;
+    margin: 5px 0 5px 0;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
