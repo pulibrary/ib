@@ -44,6 +44,7 @@
 			{%- for d in dirs %}
 			{%- if loop.first %}
 			<h2>Subdirectories</h2>
+			
 			<ul class="dirlist">
 			{%- endif %}
 				<li><a href="{{ d.rel_path }}">{{ d.name }}</a>
@@ -78,21 +79,23 @@
 			<textarea type='text' name='note' class="note">{{ note }}</textarea><br/>
 			<input type=submit value="Submit" />
 		</form>
-	</div>
+	</div>	
 	<h2>Images</h2> 
-	<ul class="thumbnails">
-	{%- endif %}
-		<li>
-			<a href="#imgZoom" data-toggle="modal">
-			<!-- <a href="{{ urn_to_djatoka_query(5, image.urn) }}"> -->
-				<img class="thumbnail" src="{{ urn_to_djatoka_query(1, image.urn) }}">
-			</a>
-			<p>{{ image.name }}</p>
-		</li>
-	{%- if loop.last %}
-	</ul>
-	{%- endif %}
-	{%- endfor %}
+		<div id="bg">
+		<ul class="thumbnails">
+		{%- endif %}
+			<li>
+				<a href="#imgZoom" data-toggle="modal">
+				<!-- <a href="{{ urn_to_djatoka_query(5, image.urn) }}"> -->
+					<img class="thumbnail" src="{{ urn_to_djatoka_query(1, image.urn) }}">
+				</a>
+				<p>{{ image.name }}</p>
+			</li>
+		{%- if loop.last %}
+		</ul>
+		{%- endif %}
+		{%- endfor %}
+		</div>
 	</div>
 
 	<!-- Button to trigger modal -->

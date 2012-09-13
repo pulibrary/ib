@@ -55,13 +55,13 @@ $(document).ready(function(){
 		$('.modal').css({
 	        width: clientCoords().width - 100,
 	        height: "auto",
-	        top: 300,
+	        top: 290,
 	        'margin-left': function () {
 	            return -($(this).width() / 2);
 	        }
 	    });
 		
-		$('.modal-body').css('max-height', clientCoords().height - 300)
+		$('.modal-body').css('max-height', clientCoords().height - 190)
 		
 		$("#zoomImg").attr("src", this.src.substring(0, this.src.length - 1) + "5");
 	});
