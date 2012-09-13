@@ -80,8 +80,32 @@
 			<input type=submit value="Submit" />
 		</form>
 	</div>	
-	<h2>Images</h2> 
-		<div id="bg">
+	<div class="row">
+  		<div class="span4"><h2>Images</h2></div>
+  		<div class="span8">
+	  	    <div class="palette">
+		    	
+		    	<div class="swatch" style="background-color: #000000;color:white;" title="black">
+		    		<span>#909b86</span>
+		    	</div>
+		    	<div class="swatch active" style="background-color: #2E2E2E;color:white;" title="gray18">
+		    		<span>#2E2E2E</span>
+		    	</div>
+		    	<div class="swatch" style="background-color: #7F7F7F;color:black;" title="gray50">
+		    		<span>#7F7F7F</span>
+		    	</div>
+		    	<div class="swatch" style="background-color: #D1D1D1;color:black;" title="gray82">
+		    		<span>#D1D1D1</span>
+		    	</div>
+		    	<div class="swatch" style="background-color: #FFFFFF;color:black;" title="white">
+		    		<span>#FFFFFF</span>
+		    	</div>
+		    	<div style="float:right; margin-right:5px; margin-top:-5px;">Change background color:</div>
+		    </div> 		
+  		</div>
+	</div>
+	
+		<div id="bg" style="clear:both;">
 		<ul class="thumbnails">
 		{%- endif %}
 			<li>

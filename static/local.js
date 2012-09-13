@@ -31,6 +31,15 @@ $(document).ready(function(){
 		
 	});
 	
+	$(".swatch").on("click", function(){
+		
+		$(".swatch").removeClass("active");
+		$(this).addClass("active");
+		$("#bg").css("background-color", $(this).css("background-color"));
+		$("#bg").css("color", $(this).css("color"));
+		
+	});
+	
 	function clientCoords() {
 		var dimensions = {width: 0, height: 0};
 		if (document.body && document.body.offsetWidth) {
