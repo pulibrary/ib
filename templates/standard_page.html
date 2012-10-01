@@ -108,12 +108,12 @@
 		<div id="bg" style="clear:both;">
 		<ul class="thumbnails">
 		{%- endif %}
-			<li>
+			<li class="resource">
 				<a href="#imgZoom" data-toggle="modal">
 				<!-- <a href="{{ urn_to_djatoka_query(5, image.urn) }}"> -->
-					<img class="thumbnail" src="{{ urn_to_djatoka_query(1, image.urn) }}">
+					<img class="thumb" src="{{ urn_to_djatoka_query(1, image.urn) }}">
+					<p class="caption">{{ image.name }}</p>
 				</a>
-				<p>{{ image.name }}</p>
 			</li>
 		{%- if loop.last %}
 		</ul>

@@ -58,22 +58,32 @@ $(document).ready(function(){
 		}
 		return dimensions;
 	}
-	
-	$(".thumbnail").on("click", function(){
+
+
+	$(".resource").on("click", function(){
+		
+		$(".resource").removeClass("active");
+		$(this).addClass("active");
+		
+		var thumb = $(this).find(".thumb");
 		
 		$('.modal').css({
 	        width: clientCoords().width - 100,
 	        height: "auto",
 	        top: 290,
 	        'margin-left': function () {
-	            return -($(this).width() / 2);
+	            return -((clientCoords().width - 100) / 2);
 	        }
 	    });
 		
 		$('.modal-body').css('max-height', clientCoords().height - 190)
 		
-		$("#zoomImg").attr("src", this.src.substring(0, this.src.length - 1) + "5");
+		var url = thumb.attr("src");
+		
+		// change the djatoka url to a level 5
+		$("#zoomImg").attr("src", url.substring(0, url.length - 1) + "5");
 	});
+
 	
 	  /* attach a submit handler to the form */
 	  $("#eadForm").submit(function(event) {
