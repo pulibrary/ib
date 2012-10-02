@@ -22,13 +22,7 @@ VirtualHost file:
 ``` 
     WSGIDaemonProcess ib user=[webserver user] group=[webserver user] processes=2 threads=5
     WSGIScriptAlias /ib /path/to/ib/ib.wsgi
-
-    <Directory /path/to/ib>
-        WSGIProcessGroup ib
-        WSGIApplicationGroup %{GLOBAL}
-        Order allow,deny
-        Allow from all
-    </Directory>
+    WSGIProcessGroup ib
 
 ```
 
