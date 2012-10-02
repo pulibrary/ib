@@ -88,6 +88,18 @@ $(document).ready(function(){
 		$("#zoomImg").attr("src", url.substring(0, url.length - 1) + "5");
 	});
 
+	$("#rotate").on("click", function(){
+		event.preventDefault();
+		// http://lib-staff906-a.princeton.edu/images/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id=urn:pudl:images:deliverable:AC024/c002/00000002.jp2&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=5
+		var url = $.url($("#zoomImg").attr("src"));
+		var cur_rotation = (url.param('svc.rotate') == undefined) ? 0 : parseInt(url.param('svc.rotate'));
+		var new_rotation = cur_rotation + 90;
+		new_rotation = (new_rotation == 360) ? 0: new_rotation;
+		
+		url.param('svc.rotate', new_rotation);
+		$("#zoomImg").attr("src", url);
+
+	});
 	
 	  /* attach a submit handler to the form */
 	  $("#eadForm").submit(function(event) {
