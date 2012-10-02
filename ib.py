@@ -164,8 +164,10 @@ class Ib(object):
 
 
 		# return Response(fs_path)
+			host = request.headers.get('X-Forwarded-Host')
+			host = request.headers.get('Host') if host is None else host
 			return self.render_template('standard_page.html',
-				base='http://' + request.headers.get('Host') + request.environ.get('SCRIPT_NAME') + '/',
+				base='http://' + host + request.environ.get('SCRIPT_NAME') + '/',
 				show_home=bool(fs_path),
 				name=name,
 				title=title,
