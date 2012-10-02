@@ -19,10 +19,10 @@ import urlparse
 DB_NAME='ib.db'
 
 class Ib(object):
-	def __init__(self, jp2_root, djatoka_url, url_root, app_title):
+	def __init__(self, jp2_root, djatoka_url, app_title):
 		self.jp2_root = jp2_root if jp2_root.endswith('/') else jp2_root + '/' # for consistent path hacking
 		self.djatoka_url = djatoka_url
-		self.url_root = url_root if url_root.endswith('/') else url_root + '/'
+		#self.url_root = url_root if url_root.endswith('/') else url_root + '/'
 		self.app_title = app_title
 
 		self.db_path=os.path.join(os.path.dirname(__file__), DB_NAME)
@@ -38,8 +38,8 @@ class Ib(object):
 			Rule('/', endpoint='page_from_dir'),
 			Rule('/<path:fs_path>', endpoint='page_from_dir'),
 			Rule('/c_map', endpoint='db_dump'),
-			Rule('/favicon.ico', endpoint='get_favicon')
-#			Rule('/_headers', endpoint='list_headers'), # for debguging
+			Rule('/favicon.ico', endpoint='get_favicon'),
+			Rule('/_headers', endpoint='list_headers') # for debguging
 		])
 	
 
@@ -165,7 +165,7 @@ class Ib(object):
 
 		# return Response(fs_path)
 			return self.render_template('standard_page.html',
-				base=self.url_root,
+				base='http://' + request.headers.get('Host') + request.environ.get('SCRIPT_NAME') + '/',
 				show_home=bool(fs_path),
 				name=name,
 				title=title,
@@ -299,12 +299,12 @@ def create_app():
 	djatoka_url = conf.get('paths', 'djatoka_url')
 	logr.info('djatoka_url: ' + djatoka_url)
 
-	url_root = conf.get('paths', 'url_root')
-	logr.info('url_root: ' + url_root)
+#	url_root = conf.get('paths', 'url_root')
+#	logr.info('url_root: ' + url_root)
 
 	app_title = conf.get('app', 'name')
 
-	app = Ib(jp2_root=jp2_root, djatoka_url=djatoka_url, url_root=url_root, app_title=app_title)
+	app = Ib(jp2_root=jp2_root, djatoka_url=djatoka_url, app_title=app_title)
 	app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
 		'/static':  os.path.join(os.path.dirname(__file__), 'static')
 	})
