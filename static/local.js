@@ -66,6 +66,7 @@ $(document).ready(function(){
 		$(this).addClass("active");
 		
 		var thumb = $(this).find(".thumb");
+		var label = $(this).find(".caption").text();
 		
 		$('.modal').css({
 	        width: clientCoords().width - 100,
@@ -79,6 +80,9 @@ $(document).ready(function(){
 		$('.modal-body').css('max-height', clientCoords().height - 190)
 		
 		var url = thumb.attr("src");
+		
+		// update the modal title
+		$("#imgZoomLabel").text(label);
 		
 		// change the djatoka url to a level 5
 		$("#zoomImg").attr("src", url.substring(0, url.length - 1) + "5");
