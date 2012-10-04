@@ -5,9 +5,9 @@ Browse A filesystem containing JPEG 2000 images.
 
 Dependencies
 ------------
-Werkzeug and Jinja2 are required. Both are available in apt:
+Werkzeug, Jinja2, and Sqlite3 are required. All are available in apt:
 
-	apt-get install python-werkzeug python-jinja2
+	apt-get install python-werkzeug python-jinja2 sqlite3 libsqlite3-dev
 
 Configuration
 -------------
@@ -39,3 +39,7 @@ Running the module (`python ./ib.py`) will start a dev. server on port 5000.
 Logging
 -------
 Levels, etc. are set in `ib.conf`. Note that logs must be writable by the webserver. If they are not, you will get an Ineternal Server Error (500).
+
+Backup Options
+-------
+[This shell script](https://gist.github.com/3835123) can be used to backup the sqlite3 database.
