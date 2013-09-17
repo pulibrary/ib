@@ -111,8 +111,7 @@
 		{%- endif %}
 			<li class="resource">
 				<a href="#imgZoom" data-toggle="modal">
-				<!-- <a href="{{ urn_to_djatoka_query(5, image.urn) }}"> -->
-					<img class="thumb" src="{{ urn_to_djatoka_query(1, image.urn) }}">
+					<img class="thumb" src="{{ ident_to_loris_uri('!200,200', image.ident) }}">
 					<p class="caption">{{ image.name }}</p>
 				</a>
 			</li>
