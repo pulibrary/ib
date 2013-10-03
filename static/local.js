@@ -3,7 +3,31 @@
   * ======================================================= */
 
 
+
 $(document).ready(function(){
+	
+	/* LORIS stuff */
+	var SERVER = 'http://libimages.princeton.edu/loris/'
+	var CB = '/info.json?callback=?'
+	var SAMPLES = [
+	'pudl0001%2F5138415%2F00000011.jp2'
+	]
+	
+	var osd_config = {
+		id: "viewer",
+		prefixUrl: "/static/openseadragon/images/",
+		preserveViewport: true,
+		showNavigator:  true,
+		visibilityRatio: 1,
+		minZoomLevel: 1,
+		tileSources: []
+	}
+	
+	function updateTileSources(data) {
+		// osd_config.tileSources.push(data);
+		osd_config.tileSources = data;
+	}
+	/* end LORIS stuff */
 	
 	if (getCookie("showEAD") != 'true'){
 		$("#eadtoggle").html("Show EAD Tools");
@@ -69,23 +93,46 @@ $(document).ready(function(){
 		var label = $(this).find(".caption").text();
 		
 		$('.modal').css({
-	        width: clientCoords().width - 100,
-	        height: "auto",
-	        top: 290,
-	        'margin-left': function () {
-	            return -((clientCoords().width - 100) / 2);
-	        }
-	    });
+			width: clientCoords().width - 100,
+			height: "auto",
+			top: 290,
+			'margin-left': function () {
+			    return -((clientCoords().width - 100) / 2);
+			}
+		});
 		
 		$('.modal-body').css('max-height', clientCoords().height - 190)
 		
-		var url = thumb.attr("src");
+		$('#viewer').width( clientCoords().width - 100 );
+		$('#viewer').height( clientCoords().height - 190 );
+		$('.toolbar').width( clientCoords().width - 100 );
+		
+		var url = thumb.attr("src").replace("http://libimages.princeton.edu/loris/","");
+		urn = url.substring(0, url.indexOf('/'));
 		
 		// update the modal title
 		$("#imgZoomLabel").text(label);
 		
 		// change the djatoka url to a level 5
-		$("#zoomImg").attr("src", url.substring(0, url.length - 1) + "5");
+		// $("#viewer").attr("src", url.substring(0, url.length - 1) + "5");
+		//$("#viewer").html(url);
+		
+		$.when (
+			$.getJSON(SERVER + urn + CB,
+			      function(data) {
+				      /* Need to test if OpenSeaDragon exists and destroy it if it is?	
+				      if(OpenSeadragon.isOpen()){
+					OpenSeadragon.destroy();	
+				      }
+				      */
+				      
+				      updateTileSources(data);
+			      }
+			)
+		).then( function() {
+			OpenSeadragon(osd_config)
+		}) 
+		
 	});
 
 	$("#rotate").on("click", function(event){

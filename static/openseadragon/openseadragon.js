@@ -566,7 +566,6 @@ window.OpenSeadragon = window.OpenSeadragon || function( options ){
             timeout:                30000,
 
             //INTERFACE RESOURCE SETTINGS
-            prefixUrl:              "/images/",
             navImages: {
                 zoomIn: {
                     REST:   'zoomin_rest.png',
