@@ -6,28 +6,6 @@
 
 $(document).ready(function(){
 	
-	/* LORIS stuff */
-	var SERVER = 'http://libimages.princeton.edu/loris/'
-	var CB = '/info.json?callback=?'
-	var SAMPLES = [
-	'pudl0001%2F5138415%2F00000011.jp2'
-	]
-	
-	var osd_config = {
-		id: "viewer",
-		prefixUrl: "/static/openseadragon/images/",
-		preserveViewport: true,
-		showNavigator:  true,
-		visibilityRatio: 1,
-		minZoomLevel: 1,
-		tileSources: []
-	}
-	
-	function updateTileSources(data) {
-		// osd_config.tileSources.push(data);
-		osd_config.tileSources = data;
-	}
-	/* end LORIS stuff */
 	
 	if (getCookie("showEAD") != 'true'){
 		$("#eadtoggle").html("Show EAD Tools");
@@ -117,33 +95,63 @@ $(document).ready(function(){
 		// $("#viewer").attr("src", url.substring(0, url.length - 1) + "5");
 		//$("#viewer").html(url);
 		
+		
+
 		$.when (
 			$.getJSON(SERVER + urn + CB,
 			      function(data) {
-				      /* Need to test if OpenSeaDragon exists and destroy it if it is?	
-				      if(OpenSeadragon.isOpen()){
-					OpenSeadragon.destroy();	
-				      }
-				      */
-				      
+				      o.destroy();
 				      updateTileSources(data);
 			      }
 			)
 		).then( function() {
-			OpenSeadragon(osd_config)
-		}) 
+			o = OpenSeadragon(osd_config)
+		})
+		
+		
 		
 	});
 
+	/* LORIS stuff */
+	var SERVER = 'http://libimages.princeton.edu/loris/'
+	var CB = '/info.json?callback=?'
+	var SAMPLES = [
+	'pudl0001%2F5138415%2F00000011.jp2'
+	]
+	var rotation = 0;
+	
+	var osd_config = {
+		id: "viewer",
+		prefixUrl: "/static/openseadragon/images/",
+		preserveViewport: true,
+		showNavigator:  true,
+		visibilityRatio: 1,
+		minZoomLevel: 1,
+		tileSources: [{"profile": "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2", "scale_factors": [1, 2, 4, 8, 16], "tile_height": 256, "height": 3600, "width": 2676, "tile_width": 256, "qualities": ["native", "bitonal", "grey", "color"], "formats": ["jpg", "png", "gif"], "@context": "http://library.stanford.edu/iiif/image-api/1.1/context.json", "@id": "http://libimages.princeton.edu/loris/pudl0001%2F5138415%2F00000011.jp2"}]
+	}
+	
+	o = OpenSeadragon(osd_config);
+	
+	function isCanvasSupported(){
+	  var elem = document.createElement('canvas');
+	  return !!(elem.getContext && elem.getContext('2d'));
+        }  
+	      
+	function updateTileSources(data) {
+		// osd_config.tileSources.push(data);
+		osd_config.tileSources = data;
+	}
+	/* end LORIS stuff */
+	
 	$("#rotate").on("click", function(event){
 		event.preventDefault();
-		var url = $.url($("#zoomImg").attr("src"));
-		var cur_rotation = (url.param('svc.rotate') == undefined) ? 0 : parseInt(url.param('svc.rotate'));
-		var new_rotation = cur_rotation + 90;
-		new_rotation = (new_rotation == 360) ? 0: new_rotation;
-		
-		url.param('svc.rotate', new_rotation);
-		$("#zoomImg").attr("src", url);
+		if(isCanvasSupported()){
+			rotation = rotation + 90;
+			if(rotation == 360){ rotation = 0; }
+			o.viewport.setRotation(rotation);
+		}else{
+		    alert("Sorry, your browser doesn't support rotation.");
+		}
 	});
 	
 	  /* attach a submit handler to the form */
