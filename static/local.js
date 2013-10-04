@@ -7,6 +7,7 @@
 $(document).ready(function(){
 	
 	
+	
 	if (getCookie("showEAD") != 'true'){
 		$("#eadtoggle").html("Show EAD Tools");
 		$(".eadinfo").hide();
@@ -61,63 +62,46 @@ $(document).ready(function(){
 		return dimensions;
 	}
 
-
-	$(".resource").on("click", function(){
-		
+	$(".overlay").on("click", function(){
+		$(".overlay").hide();
+		$(".mod").hide();
+	});
+	
+	$(".resource").on("click", function(event){
+		event.preventDefault();
+		$(".overlay").show();
+		$(".mod").show();
 		$(".resource").removeClass("active");
 		$(this).addClass("active");
 		
 		var thumb = $(this).find(".thumb");
 		var label = $(this).find(".caption").text();
-		
-		$('.modal').css({
-			width: clientCoords().width - 100,
-			height: "auto",
-			top: 290,
-			'margin-left': function () {
-			    return -((clientCoords().width - 100) / 2);
-			}
-		});
-		
-		$('.modal-body').css('max-height', clientCoords().height - 190)
-		
-		$('#viewer').width( clientCoords().width - 100 );
-		$('#viewer').height( clientCoords().height - 190 );
-		$('.toolbar').width( clientCoords().width - 100 );
-		
-		var url = thumb.attr("src").replace("http://libimages.princeton.edu/loris/","");
-		urn = url.substring(0, url.indexOf('/'));
+		var url = thumb.attr("data-info");
 		
 		// update the modal title
 		$("#imgZoomLabel").text(label);
-		
-		// change the djatoka url to a level 5
-		// $("#viewer").attr("src", url.substring(0, url.length - 1) + "5");
-		//$("#viewer").html(url);
-		
-		
-
-		$.when (
-			$.getJSON(SERVER + urn + CB,
+	        var promises = []
+		promises.push(setOverlaySize());
+		promises.push( $.getJSON(url + CB,
 			      function(data) {
-				      o.destroy();
+				      if(typeof o !== 'undefined'){
+					o.destroy();
+				      }
 				      updateTileSources(data);
+				    
 			      }
 			)
-		).then( function() {
-			o = OpenSeadragon(osd_config)
-		})
+		)
+		$.when.apply($, promises).done(function() {
+			o = OpenSeadragon(osd_config);
+		});
 		
 		
 		
 	});
-
+	
 	/* LORIS stuff */
-	var SERVER = 'http://libimages.princeton.edu/loris/'
-	var CB = '/info.json?callback=?'
-	var SAMPLES = [
-	'pudl0001%2F5138415%2F00000011.jp2'
-	]
+	var CB = '?callback=?'
 	var rotation = 0;
 	
 	var osd_config = {
@@ -126,11 +110,11 @@ $(document).ready(function(){
 		preserveViewport: true,
 		showNavigator:  true,
 		visibilityRatio: 1,
-		minZoomLevel: 1,
 		tileSources: [{"profile": "http://library.stanford.edu/iiif/image-api/1.1/compliance.html#level2", "scale_factors": [1, 2, 4, 8, 16], "tile_height": 256, "height": 3600, "width": 2676, "tile_width": 256, "qualities": ["native", "bitonal", "grey", "color"], "formats": ["jpg", "png", "gif"], "@context": "http://library.stanford.edu/iiif/image-api/1.1/context.json", "@id": "http://libimages.princeton.edu/loris/pudl0001%2F5138415%2F00000011.jp2"}]
 	}
 	
-	o = OpenSeadragon(osd_config);
+	// initialize OpenSeadragon
+	// o = OpenSeadragon(osd_config);
 	
 	function isCanvasSupported(){
 	  var elem = document.createElement('canvas');
@@ -141,6 +125,57 @@ $(document).ready(function(){
 		// osd_config.tileSources.push(data);
 		osd_config.tileSources = data;
 	}
+	
+	function setOverlaySize() {
+		var height = jQuery(window).height();
+		var width = jQuery(window).width();
+		
+		var c = $('#container');
+		var v = $('#viewer');
+
+		c.width( width );
+		c.height( height );	
+		v.width( width );
+		v.height( height );
+		v.css("margin", "40px");
+		v.css("background-color", $("#bg").css("background-color"));
+		v.css("color", $("#bg").css("color"));
+
+		$('.toolbar').width( width );	
+	}
+	
+	function setViewerSize() {
+			var dfd = new jQuery.Deferred();
+		
+			var m = $('#imgZoom'); //modal
+			var c = $('#container');
+			var v = $('#viewer');
+		
+			m.css({
+				width: clientCoords().width - 100,
+				height: "auto",
+				top: 290,
+				'margin-left': function () {
+				    return -((clientCoords().width - 100) / 2);
+				}
+			});
+
+			c.css("background-color", $("#bg").css("background-color"));
+			c.css("color", $("#bg").css("color"));
+			
+			c.css('max-height', clientCoords().height - 190)
+			
+			// c.width( clientCoords().width - 100 );
+			// c.height( clientCoords().height - 190 );
+			v.width( clientCoords().width - 100 );
+			v.height( clientCoords().height - 190 );
+			$('.toolbar').width( clientCoords().width - 100 );
+			
+			dfd.resolve( "hurray" );
+			
+			return dfd.promise();
+		}
+	
 	/* end LORIS stuff */
 	
 	$("#rotate").on("click", function(event){
