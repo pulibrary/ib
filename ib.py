@@ -15,13 +15,15 @@ import os
 import re
 import sqlite3 as sqlite
 import urlparse
+from urllib import quote
+
 
 DB_NAME='ib.db'
 
 class Ib(object):
-	def __init__(self, jp2_root, djatoka_url, app_title):
+	def __init__(self, jp2_root, loris_url, app_title):
 		self.jp2_root = jp2_root if jp2_root.endswith('/') else jp2_root + '/' # for consistent path hacking
-		self.djatoka_url = djatoka_url
+		self.loris_url = loris_url
 		#self.url_root = url_root if url_root.endswith('/') else url_root + '/'
 		self.app_title = app_title
 
@@ -30,7 +32,8 @@ class Ib(object):
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
 
-		self.jinja_env.globals['urn_to_djatoka_query'] = self.urn_to_djatoka_query
+		self.jinja_env.globals['ident_to_loris_uri'] = self.ident_to_loris_uri
+		self.jinja_env.globals['ident_to_loris_info_uri'] = self.ident_to_loris_info_uri
 
 		self.db_setup()
 
@@ -43,16 +46,21 @@ class Ib(object):
 		])
 	
 
-	def urn_to_djatoka_query(self, level, urn):
-		q = self.djatoka_url
-		q += '?url_ver=Z39.88-2004'
-		q += '&rft_id=' + urn
-		q += '&svc_id=info:lanl-repo/svc/getRegion'
-		q += '&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000'
-		q += '&svc.format=image/jpeg'
-		q += '&svc.level=' + str(level)
-		return q 
+	# def urn_to_djatoka_query(self, level, urn):
+	# 	q = self.djatoka_url
+	# 	q += '?url_ver=Z39.88-2004'
+	# 	q += '&rft_id=' + urn
+	# 	q += '&svc_id=info:lanl-repo/svc/getRegion'
+	# 	q += '&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000'
+	# 	q += '&svc.format=image/jpeg'
+	# 	q += '&svc.level=' + str(level)
+	# 	return q 
 
+	def ident_to_loris_uri(self, size, ident):
+		return '{l}/{i}/full/{s}/0/native.jpg'.format(l=self.loris_url,i=ident,s=size)
+	
+	def ident_to_loris_info_uri(self, ident):
+		return '{l}/{i}/info.json'.format(l=self.loris_url,i=ident)
 
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
@@ -85,11 +93,12 @@ class Ib(object):
 		for f in os.listdir(img_dir):
 			abs_path = os.path.join(img_dir, f)
 			if not f.startswith('.') and os.path.isfile(abs_path) and f.endswith('.jp2'):
-				urn = abs_path.replace(self.jp2_root, 'urn:pudl:images:deliverable:')
-				logr.debug(urn)
+				# urn = abs_path.replace(self.jp2_root, 'urn:pudl:images:deliverable:')
+				ident =  quote(abs_path.replace(self.jp2_root, ''), '')
+				logr.debug(ident)
 				# TODO: what do we want in this list exactly? Something that can
 				# be used to resolve a jp2 w/ Djatoka (or patokah :) )
-				jp2s.append(Image(urn, f))
+				jp2s.append(Image(ident, f))
 		jp2s.sort()
 		return jp2s
 
@@ -274,8 +283,8 @@ class Image(object):
 	"""Stuff we need to know about an image (gets passed to the template 
 		engine). 
 	"""
-	def __init__(self, urn, name):
-		self.urn = urn
+	def __init__(self, ident, name):
+		self.ident = ident
 		self.name = name
 
 	def __lt__(self, other):
@@ -298,15 +307,15 @@ def create_app():
 	jp2_root = conf.get('paths', 'jp2_root')
 	logr.info('jp2_root: ' + jp2_root)
 
-	djatoka_url = conf.get('paths', 'djatoka_url')
-	logr.info('djatoka_url: ' + djatoka_url)
+	loris_url = conf.get('paths', 'loris_url')
+	logr.info('loris_url: ' + loris_url)
 
 #	url_root = conf.get('paths', 'url_root')
 #	logr.info('url_root: ' + url_root)
 
 	app_title = conf.get('app', 'name')
 
-	app = Ib(jp2_root=jp2_root, djatoka_url=djatoka_url, app_title=app_title)
+	app = Ib(jp2_root=jp2_root, loris_url=loris_url, app_title=app_title)
 	app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
 		'/static':  os.path.join(os.path.dirname(__file__), 'static')
 	})
