@@ -43,34 +43,20 @@ $(document).ready(function(){
 		
 	});
 	
-	function clientCoords() {
-		var dimensions = {width: 0, height: 0};
-		if (document.body && document.body.offsetWidth) {
-		 dimensions.width = document.body.offsetWidth;
-		 dimensions.height = document.body.offsetHeight;
-		}
-		if (document.compatMode=='CSS1Compat' &&
-		    document.documentElement &&
-		    document.documentElement.offsetWidth ) {
-		 dimensions.width = document.documentElement.offsetWidth;
-		 dimensions.height = document.documentElement.offsetHeight;
-		}
-		if (window.innerWidth && window.innerHeight) {
-		 dimensions.width = window.innerWidth;
-		 dimensions.height = window.innerHeight;
-		}
-		return dimensions;
+	
+	function closeModal() {
+		$("#lightbox").fadeOut( "slow" );
+		$("#container").fadeOut( "slow" );
 	}
 
-	$(".overlay").on("click", function(){
-		$(".overlay").hide();
-		$(".mod").hide();
-	});
+	$("#closeModal").on( "click", closeModal );
+	$("#lightbox").on( "click", closeModal );
 	
 	$(".resource").on("click", function(event){
 		event.preventDefault();
-		$(".overlay").show();
-		$(".mod").show();
+		$("#lightbox").fadeIn( "slow" );
+		$("#container").fadeIn( "slow" );
+
 		$(".resource").removeClass("active");
 		$(this).addClass("active");
 		
@@ -127,54 +113,17 @@ $(document).ready(function(){
 	}
 	
 	function setOverlaySize() {
-		var height = jQuery(window).height();
-		var width = jQuery(window).width();
-		
+
 		var c = $('#container');
 		var v = $('#viewer');
-
-		c.width( width );
-		c.height( height );	
-		v.width( width );
-		v.height( height );
-		v.css("margin", "40px");
+		v.css("width", "100%");
+		v.css("height", "90%");
 		v.css("background-color", $("#bg").css("background-color"));
 		v.css("color", $("#bg").css("color"));
 
-		$('.toolbar').width( width );	
+		//$('.toolbar').width( dimensions.width );	
 	}
-	
-	function setViewerSize() {
-			var dfd = new jQuery.Deferred();
-		
-			var m = $('#imgZoom'); //modal
-			var c = $('#container');
-			var v = $('#viewer');
-		
-			m.css({
-				width: clientCoords().width - 100,
-				height: "auto",
-				top: 290,
-				'margin-left': function () {
-				    return -((clientCoords().width - 100) / 2);
-				}
-			});
 
-			c.css("background-color", $("#bg").css("background-color"));
-			c.css("color", $("#bg").css("color"));
-			
-			c.css('max-height', clientCoords().height - 190)
-			
-			// c.width( clientCoords().width - 100 );
-			// c.height( clientCoords().height - 190 );
-			v.width( clientCoords().width - 100 );
-			v.height( clientCoords().height - 190 );
-			$('.toolbar').width( clientCoords().width - 100 );
-			
-			dfd.resolve( "hurray" );
-			
-			return dfd.promise();
-		}
 	
 	/* end LORIS stuff */
 	
@@ -188,6 +137,8 @@ $(document).ready(function(){
 		    alert("Sorry, your browser doesn't support rotation.");
 		}
 	});
+	
+	
 	
 	  /* attach a submit handler to the form */
 	  $("#eadForm").submit(function(event) {

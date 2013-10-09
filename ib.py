@@ -33,6 +33,7 @@ class Ib(object):
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path), autoescape=True)
 
 		self.jinja_env.globals['ident_to_loris_uri'] = self.ident_to_loris_uri
+		self.jinja_env.globals['ident_to_loris_info_uri'] = self.ident_to_loris_info_uri
 
 		self.db_setup()
 
@@ -57,6 +58,9 @@ class Ib(object):
 
 	def ident_to_loris_uri(self, size, ident):
 		return '{l}/{i}/full/{s}/0/native.jpg'.format(l=self.loris_url,i=ident,s=size)
+	
+	def ident_to_loris_info_uri(self, ident):
+		return '{l}/{i}/info.json'.format(l=self.loris_url,i=ident)
 
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)

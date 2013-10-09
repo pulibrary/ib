@@ -110,37 +110,32 @@
 		<ul class="thumbnails">
 		{%- endif %}
 			<li class="resource">
-				<a href="#imgZoom" data-toggle="modal">
-					<img class="thumb" src="{{ ident_to_loris_uri('!200,200', image.ident) }}">
+				<a href="#imgZoom">
+					<img class="thumb" data-info="{{ ident_to_loris_info_uri(image.ident) }}" src="{{ ident_to_loris_uri('!200,200', image.ident) }}">
 					<p class="caption">{{ image.name }}</p>
 				</a>
 			</li>
 		{%- if loop.last %}
 		</ul>
 		{%- endif %}
-		{%- endfor %}
+	        {%- endfor %}
+		
 		</div>
+		
 	</div>
 
 	<!-- Button to trigger modal -->
 	<!-- <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a> -->
+	 <div id="lightbox"></div>
 	 
-	<!-- Modal -->
-	<div class="modal hide fade" id="imgZoom" tabindex="-1" role="dialog" aria-labelledby="imgZoomLabel" aria-hidden="true">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	    <h3 id="imgZoomLabel">Image Detail</h3>
-	  </div>
-	  <div class="modal-body">
-	    <div id="container">
-	      <div id="viewer" class="openseadragon"></div>
-	    </div>
-	  </div>
-	  <div class="modal-footer">
+	 <div id="container">
+	       <h3 id="imgZoomLabel">Image Detail</h3>
+	       <div id="viewer" class="openseadragon"></div>
+	       <div id="container-footer">
 	  	<a id="rotate" class="btn" href="#"><i class="icon-repeat"></i></a>
-	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	  </div>
-	</div>
-
+		  <button class="btn" id="closeModal">Close</button>
+		</div>
+	   </div>
+	 
 
 {% endblock %}
