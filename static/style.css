@@ -165,4 +165,10 @@ max-width: 200px;
 padding: 14px 15px 15px;
 margin-bottom: 20px;
 text-align: right;
+border-radius: 5px 5px 5px 5px;
+-moz-border-radius: 5px 5px 5px 5px;
+-webkit-border-radius: 5px 5px 5px 5px;
+background-color: #fff;
+margin-left: -26px;
+margin-right: -26px;
 }
