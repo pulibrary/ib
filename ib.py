@@ -57,7 +57,7 @@ class Ib(object):
 	# 	return q 
 
 	def ident_to_loris_uri(self, size, ident):
-		return '{l}/{i}/full/{s}/0/native.jpg'.format(l=self.loris_url,i=ident,s=size)
+		return '{l}/{i}/full/{s}/0/default.jpg'.format(l=self.loris_url,i=ident,s=size)
 	
 	def ident_to_loris_info_uri(self, ident):
 		return '{l}/{i}/info.json'.format(l=self.loris_url,i=ident)
