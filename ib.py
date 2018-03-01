@@ -44,7 +44,7 @@ class Ib(object):
 			Rule('/favicon.ico', endpoint='get_favicon'),
 			Rule('/_headers', endpoint='list_headers') # for debguging
 		])
-	
+
 
 	# def urn_to_djatoka_query(self, level, urn):
 	# 	q = self.djatoka_url
@@ -54,11 +54,11 @@ class Ib(object):
 	# 	q += '&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000'
 	# 	q += '&svc.format=image/jpeg'
 	# 	q += '&svc.level=' + str(level)
-	# 	return q 
+	# 	return q
 
 	def ident_to_loris_uri(self, size, ident):
 		return '{l}/{i}/full/{s}/0/default.jpg'.format(l=self.loris_url,i=ident,s=size)
-	
+
 	def ident_to_loris_info_uri(self, ident):
 		return '{l}/{i}/info.json'.format(l=self.loris_url,i=ident)
 
@@ -66,7 +66,7 @@ class Ib(object):
 		adapter = self.url_map.bind_to_environ(request.environ)
 		endpoint, values = adapter.match()
 		return getattr(self, 'on_' + endpoint)(request, **values)
-		
+
 
 	def list_dirs(self, img_dir):
 		"""Leaves out hidden dirs
@@ -76,7 +76,7 @@ class Ib(object):
 		for d in os.listdir(img_dir):
 			abs_path = os.path.join(img_dir, d)
 			if not d.startswith('.') and os.path.isdir(abs_path):
-				rel =  abs_path[len(self.jp2_root):]	
+				rel =  abs_path[len(self.jp2_root):]
 				name = abs_path.split(os.sep)[-1]
 				component = self.db_get_row(rel)
 				dirs.append(ImageDir(abs_path, rel, name, component))
@@ -111,7 +111,7 @@ class Ib(object):
 			rows = cur.fetchall()
 			resp = '#Image Dir\tComponent Path\tNote\n'
 			for row in rows:
-				component_path = row[1][len('http://findingaids.princeton.edu/collections/'):]
+				component_path = row[1][len('https://findingaids.princeton.edu/collections/'):]
 				sane_note = ' '.join(row[2].splitlines())
 				resp += '%s\t%s\t%s\n' % (row[0], component_path, sane_note)
 		return Response(resp, mimetype='text/plain')
@@ -138,7 +138,7 @@ class Ib(object):
 
 		if request.method == 'POST':
 			# See the first line of this method. There's always an image_dir
-			# if not image_dir: 
+			# if not image_dir:
 			# 	image_dir = request.form['image_dir']
 			try:
 				component_uri = request.form['component_uri']
@@ -176,7 +176,7 @@ class Ib(object):
 			host = request.headers.get('X-Forwarded-Host')
 			host = request.headers.get('Host') if host is None else host
 			return self.render_template('standard_page.html',
-				base='http://' + host + request.environ.get('SCRIPT_NAME') + '/',
+				base='https://' + host + request.environ.get('SCRIPT_NAME') + '/',
 				show_home=bool(fs_path),
 				name=name,
 				title=title,
@@ -190,18 +190,18 @@ class Ib(object):
 			)
 
 	def is_valid_uri(self, uri):
-		return re.match('http://findingaids\.princeton\.edu/collections/[^/]+/c0\d+', uri)
+		return re.match('https://findingaids\.princeton\.edu/collections/[^/]+/c0\d+', uri)
 
 	def db_setup(self):
-		
+
 		if not os.path.exists(self.db_path):
 			con = sqlite.connect(self.db_path)
 			try:
 				cur = con.cursor()
-				cur.execute("""create table if not exists 
+				cur.execute("""create table if not exists
 					ImageDirs(
 						ImageDir TEXT PRIMARY KEY,
-						ComponentURI TEXT, 
+						ComponentURI TEXT,
 						Note TEXT
 					);""")
 				con.commit()
@@ -242,7 +242,7 @@ class Ib(object):
 
 	def on_list_headers(self, request):
 		from werkzeug.datastructures import Headers
-		
+
 		body = '==== Request Headers ====\n'
 		for k in request.headers.keys():
 			body += '%s: %s\n' % (k, request.headers.get(k))
@@ -266,7 +266,7 @@ class Ib(object):
 		return self.wsgi_app(environ, start_response)
 
 class ImageDir(object):
-	"""Stuff we need to know about an image directory (gets passed to the 
+	"""Stuff we need to know about an image directory (gets passed to the
 		template engine).
 	"""
 	def __init__(self, abs_path, rel_path, name, component=""):
@@ -280,8 +280,8 @@ class ImageDir(object):
 		return self.name < other.name
 
 class Image(object):
-	"""Stuff we need to know about an image (gets passed to the template 
-		engine). 
+	"""Stuff we need to know about an image (gets passed to the template
+		engine).
 	"""
 	def __init__(self, ident, name):
 		self.ident = ident
